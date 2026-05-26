@@ -29,8 +29,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        serif: ['"Playfair Display"', "Georgia", "serif"],
-        sans: ["Inter", "system-ui", "sans-serif"],
+        serif: ["Montserrat", "system-ui", "sans-serif"],
+        sans: ["Montserrat", "system-ui", "sans-serif"],
       },
       boxShadow: {
         gold: "0 0 30px rgba(212, 175, 55, 0.25)",
