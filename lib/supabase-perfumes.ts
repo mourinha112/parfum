@@ -28,6 +28,8 @@ type PerfumeRow = {
 type AdminStatus = {
   authed: boolean;
   email: string;
+  userId: string;
+  adminCheckError?: string;
 };
 
 function toNumber(value: number | string | null | undefined): number {
@@ -122,20 +124,36 @@ export async function replaceSupabasePerfumes(): Promise<Perfume[]> {
 
 export async function getAdminStatus(): Promise<AdminStatus> {
   const supabase = getSupabaseClient();
-  if (!supabase) return { authed: false, email: "" };
+  if (!supabase) return { authed: false, email: "", userId: "" };
 
   const { data: userData, error: userError } = await supabase.auth.getUser();
-  if (userError || !userData.user) return { authed: false, email: "" };
+  if (userError || !userData.user) {
+    return { authed: false, email: "", userId: "" };
+  }
+
+  const email = userData.user.email ?? "";
+  const userId = userData.user.id;
+
+  const { data: rpcData, error: rpcError } = await supabase.rpc("is_admin");
+  if (!rpcError) {
+    return {
+      authed: rpcData === true,
+      email,
+      userId,
+    };
+  }
 
   const { data, error } = await supabase
     .from("admin_users")
     .select("user_id")
-    .eq("user_id", userData.user.id)
+    .eq("user_id", userId)
     .maybeSingle();
 
   return {
     authed: !error && !!data,
-    email: userData.user.email ?? "",
+    email,
+    userId,
+    adminCheckError: error?.message ?? rpcError.message,
   };
 }
 
@@ -156,7 +174,7 @@ export async function signInSupabaseAdmin(
     await supabase.auth.signOut();
     const adminEmail = email.trim();
     throw new Error(
-      `Login correto, mas ${adminEmail} ainda nao esta liberado como admin. Rode o arquivo supabase/make-admin.sql no SQL Editor do Supabase trocando o e-mail.`,
+      `Login correto, mas ${adminEmail} ainda nao esta liberado como admin. User ID logado: ${status.userId}. Confirme se este ID esta em public.admin_users. ${status.adminCheckError ?? ""}`,
     );
   }
 

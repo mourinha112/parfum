@@ -22,6 +22,21 @@ create table if not exists public.admin_users (
   created_at timestamptz not null default now()
 );
 
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.admin_users
+    where admin_users.user_id = auth.uid()
+  );
+$$;
+
+grant execute on function public.is_admin() to authenticated;
+
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
@@ -52,46 +67,22 @@ create policy "Admins can insert perfumes"
 on public.perfumes
 for insert
 to authenticated
-with check (
-  exists (
-    select 1
-    from public.admin_users
-    where admin_users.user_id = auth.uid()
-  )
-);
+with check (public.is_admin());
 
 drop policy if exists "Admins can update perfumes" on public.perfumes;
 create policy "Admins can update perfumes"
 on public.perfumes
 for update
 to authenticated
-using (
-  exists (
-    select 1
-    from public.admin_users
-    where admin_users.user_id = auth.uid()
-  )
-)
-with check (
-  exists (
-    select 1
-    from public.admin_users
-    where admin_users.user_id = auth.uid()
-  )
-);
+using (public.is_admin())
+with check (public.is_admin());
 
 drop policy if exists "Admins can delete perfumes" on public.perfumes;
 create policy "Admins can delete perfumes"
 on public.perfumes
 for delete
 to authenticated
-using (
-  exists (
-    select 1
-    from public.admin_users
-    where admin_users.user_id = auth.uid()
-  )
-);
+using (public.is_admin());
 
 drop policy if exists "Admins can read own admin row" on public.admin_users;
 create policy "Admins can read own admin row"
@@ -223,11 +214,7 @@ for insert
 to authenticated
 with check (
   bucket_id = 'perfume-images'
-  and exists (
-    select 1
-    from public.admin_users
-    where admin_users.user_id = auth.uid()
-  )
+  and public.is_admin()
 );
 
 drop policy if exists "Admins can update perfume images" on storage.objects;
@@ -237,19 +224,11 @@ for update
 to authenticated
 using (
   bucket_id = 'perfume-images'
-  and exists (
-    select 1
-    from public.admin_users
-    where admin_users.user_id = auth.uid()
-  )
+  and public.is_admin()
 )
 with check (
   bucket_id = 'perfume-images'
-  and exists (
-    select 1
-    from public.admin_users
-    where admin_users.user_id = auth.uid()
-  )
+  and public.is_admin()
 );
 
 drop policy if exists "Admins can delete perfume images" on storage.objects;
@@ -259,11 +238,7 @@ for delete
 to authenticated
 using (
   bucket_id = 'perfume-images'
-  and exists (
-    select 1
-    from public.admin_users
-    where admin_users.user_id = auth.uid()
-  )
+  and public.is_admin()
 );
 
 -- Depois de criar o usuario admin em Authentication > Users,

@@ -26,6 +26,7 @@ Abra `http://localhost:3000`.
 2. Abra o SQL Editor e rode o arquivo `supabase/schema.sql`.
 3. Em Authentication > Users, crie o usuario admin com e-mail e senha.
 4. No SQL Editor, rode o arquivo `supabase/make-admin.sql` trocando o e-mail.
+   O resultado precisa mostrar `is_admin = true`.
 
 Ou rode direto:
 
