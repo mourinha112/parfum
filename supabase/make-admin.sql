@@ -16,6 +16,8 @@ $$;
 
 grant execute on function public.is_admin() to authenticated;
 
+notify pgrst, 'reload schema';
+
 drop policy if exists "Admins can read own admin row" on public.admin_users;
 create policy "Admins can read own admin row"
 on public.admin_users

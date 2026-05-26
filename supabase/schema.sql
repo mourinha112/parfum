@@ -37,6 +37,8 @@ $$;
 
 grant execute on function public.is_admin() to authenticated;
 
+notify pgrst, 'reload schema';
+
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
