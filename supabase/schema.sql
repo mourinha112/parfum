@@ -266,7 +266,8 @@ using (
   )
 );
 
--- Depois de criar o usuario admin em Authentication > Users, rode:
+-- Depois de criar o usuario admin em Authentication > Users,
+-- rode o arquivo supabase/make-admin.sql ou execute:
 -- insert into public.admin_users (user_id)
 -- select id from auth.users where email = 'seu-email@dominio.com'
 -- on conflict (user_id) do nothing;

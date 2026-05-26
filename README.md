@@ -25,7 +25,9 @@ Abra `http://localhost:3000`.
 1. Crie um projeto no Supabase.
 2. Abra o SQL Editor e rode o arquivo `supabase/schema.sql`.
 3. Em Authentication > Users, crie o usuario admin com e-mail e senha.
-4. No SQL Editor, rode o comando abaixo trocando o e-mail:
+4. No SQL Editor, rode o arquivo `supabase/make-admin.sql` trocando o e-mail.
+
+Ou rode direto:
 
 ```sql
 insert into public.admin_users (user_id)

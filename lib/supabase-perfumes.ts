@@ -154,7 +154,10 @@ export async function signInSupabaseAdmin(
   const status = await getAdminStatus();
   if (!status.authed) {
     await supabase.auth.signOut();
-    throw new Error("Usuario sem permissao de administrador.");
+    const adminEmail = email.trim();
+    throw new Error(
+      `Login correto, mas ${adminEmail} ainda nao esta liberado como admin. Rode o arquivo supabase/make-admin.sql no SQL Editor do Supabase trocando o e-mail.`,
+    );
   }
 
   return status;

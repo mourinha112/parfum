@@ -1,4 +1,5 @@
 import Image from "next/image";
+import logo from "@/logotipo.png";
 
 export default function Logo({
   size = "md",
@@ -13,7 +14,7 @@ export default function Logo({
         : { w: 260, h: 193 };
   return (
     <Image
-      src="/logotipo.jpeg"
+      src={logo}
       alt="Imperial Parfum"
       width={dims.w}
       height={dims.h}
