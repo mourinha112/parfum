@@ -11,6 +11,16 @@ export function isSupabaseConfigured(): boolean {
   return Boolean(supabaseUrl && supabaseAnonKey);
 }
 
+export function getSupabaseProjectHost(): string {
+  if (!supabaseUrl) return "";
+
+  try {
+    return new URL(supabaseUrl).host;
+  } catch {
+    return supabaseUrl;
+  }
+}
+
 export function getSupabaseClient(): SupabaseClient | null {
   if (!isSupabaseConfigured()) return null;
 

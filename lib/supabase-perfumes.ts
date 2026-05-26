@@ -1,6 +1,7 @@
 import { SEED_PERFUMES } from "./seed";
 import {
   PERFUME_IMAGE_BUCKET,
+  getSupabaseProjectHost,
   getSupabaseClient,
   requireSupabaseClient,
 } from "./supabase";
@@ -174,7 +175,7 @@ export async function signInSupabaseAdmin(
     await supabase.auth.signOut();
     const adminEmail = email.trim();
     throw new Error(
-      `Login correto, mas ${adminEmail} ainda nao esta liberado como admin. User ID logado: ${status.userId}. Confirme se este ID esta em public.admin_users. ${status.adminCheckError ?? ""}`,
+      `Login correto, mas ${adminEmail} ainda nao esta liberado como admin neste projeto (${getSupabaseProjectHost()}). User ID logado: ${status.userId}. Confirme se este ID esta em public.admin_users. ${status.adminCheckError ?? ""}`,
     );
   }
 

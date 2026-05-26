@@ -13,7 +13,7 @@ import {
   uploadPerfumeImage,
   upsertSupabasePerfume,
 } from "@/lib/supabase-perfumes";
-import { isSupabaseConfigured } from "@/lib/supabase";
+import { getSupabaseProjectHost, isSupabaseConfigured } from "@/lib/supabase";
 import {
   isAuthed,
   loadPerfumes,
@@ -342,7 +342,9 @@ export default function AdminPage() {
               Painel Administrativo
             </h1>
             <p className="text-xs text-neutral-500 mt-2 tracking-wide">
-              {usesSupabase ? "Login via Supabase Auth" : "Modo local"}
+              {usesSupabase
+                ? `Login via Supabase Auth / ${getSupabaseProjectHost()}`
+                : "Modo local"}
             </p>
           </div>
 
