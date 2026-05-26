@@ -1,7 +1,7 @@
 // === CONFIGURAÇÕES DA LOJA ===
 // Troque aqui o número do WhatsApp. Formato: 55 + DDD + número (sem + ou espaços)
 // Exemplo BR: 5511987654321
-export const WHATSAPP_NUMBER = "5511999999999";
+export const WHATSAPP_NUMBER = "5521966478262";
 
 export const STORE_NAME = "Imperial Parfum";
 

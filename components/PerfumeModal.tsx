@@ -27,7 +27,7 @@ export default function PerfumeModal({
   if (!perfume) return null;
 
   const soldOut = perfume.stock <= 0;
-  const message = `Olá, ${STORE_NAME}! Tenho interesse no perfume *${perfume.name}* (${perfume.brand}) — ${formatBRL(perfume.salePrice)}. Ainda está disponível?`;
+  const message = `Ola, ${STORE_NAME}! Vim pelo site e escolhi o perfume *${perfume.name}* (${perfume.brand}), valor ${formatBRL(perfume.salePrice)}. Quero saber se ainda esta disponivel.`;
 
   return (
     <div
