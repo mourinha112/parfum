@@ -317,7 +317,7 @@ export default function AdminPage() {
     try {
       const imageUrl = await uploadPerfumeImage(file);
       setDraft((current) => ({ ...current, imageUrl }));
-      setNotice("Foto enviada para o Supabase Storage.");
+      setNotice("Foto enviada. Salve o perfume para gravar essa foto no cadastro.");
     } catch (err) {
       setError(messageFromError(err));
     } finally {
@@ -515,11 +515,14 @@ export default function AdminPage() {
                   />
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
                     className="w-full"
                     onChange={handleImageUpload}
                     disabled={!usesSupabase || uploadingImage}
                   />
+                  <p className="text-[11px] text-neutral-600">
+                    Upload via Supabase Storage: JPG, PNG, WEBP, GIF ou AVIF ate 5 MB.
+                  </p>
                   {uploadingImage && (
                     <p className="text-xs text-neutral-500">Enviando foto...</p>
                   )}

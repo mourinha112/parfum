@@ -70,6 +70,8 @@ No painel admin voce pode:
 - ajustar preco de venda manualmente, recalculando o markup;
 - ver margem de lucro e lucro potencial do estoque.
 
+Se o upload de foto falhar, rode `supabase/storage-setup.sql` no SQL Editor do Supabase.
+
 ## Arquivos-chave
 
 - `app/page.tsx` - catalogo publico

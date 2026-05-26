@@ -33,9 +33,52 @@ type AdminStatus = {
   adminCheckError?: string;
 };
 
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const SUPPORTED_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "image/avif",
+]);
+
 function toNumber(value: number | string | null | undefined): number {
   const parsed = Number(value ?? 0);
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function validateImageFile(file: File): void {
+  if (file.size > MAX_IMAGE_SIZE) {
+    throw new Error("A foto precisa ter no maximo 5 MB.");
+  }
+
+  if (file.type && !SUPPORTED_IMAGE_TYPES.has(file.type)) {
+    throw new Error("Use uma imagem JPG, PNG, WEBP, GIF ou AVIF.");
+  }
+}
+
+function uploadErrorMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+  const lower = message.toLowerCase();
+
+  if (lower.includes("bucket not found")) {
+    return "Bucket perfume-images nao encontrado. Rode o arquivo supabase/storage-setup.sql no SQL Editor do Supabase.";
+  }
+
+  if (
+    lower.includes("row-level security") ||
+    lower.includes("violates row-level security") ||
+    lower.includes("permission denied") ||
+    lower.includes("not authorized")
+  ) {
+    return "Sem permissao para enviar foto no Storage. Rode o arquivo supabase/storage-setup.sql e confirme que o usuario esta em public.admin_users.";
+  }
+
+  if (lower.includes("mime") || lower.includes("type")) {
+    return "Tipo de imagem nao aceito. Use JPG, PNG, WEBP, GIF ou AVIF.";
+  }
+
+  return `Falha no upload da foto: ${message}`;
 }
 
 function rowToPerfume(row: PerfumeRow): Perfume {
@@ -190,9 +233,18 @@ export async function signOutSupabaseAdmin(): Promise<void> {
 
 export async function uploadPerfumeImage(file: File): Promise<string> {
   const supabase = requireSupabaseClient();
+  validateImageFile(file);
+
+  const status = await getAdminStatus();
+  if (!status.authed) {
+    throw new Error(
+      `Este usuario nao esta liberado para upload no Storage. User ID: ${status.userId || "nao encontrado"}.`,
+    );
+  }
+
   const extension = file.name.split(".").pop()?.replace(/[^a-z0-9]/gi, "") || "jpg";
   const name = slugify(file.name.replace(/\.[^.]+$/, "")) || "perfume";
-  const path = `${Date.now()}-${name}.${extension.toLowerCase()}`;
+  const path = `perfumes/${Date.now()}-${name}.${extension.toLowerCase()}`;
 
   const { error } = await supabase.storage
     .from(PERFUME_IMAGE_BUCKET)
@@ -202,7 +254,7 @@ export async function uploadPerfumeImage(file: File): Promise<string> {
       upsert: false,
     });
 
-  if (error) throw error;
+  if (error) throw new Error(uploadErrorMessage(error));
 
   const { data } = supabase.storage
     .from(PERFUME_IMAGE_BUCKET)

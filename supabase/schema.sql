@@ -195,7 +195,7 @@ insert into storage.buckets (
   'perfume-images',
   true,
   5242880,
-  array['image/jpeg', 'image/png', 'image/webp']
+  array['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif']
 )
 on conflict (id) do update
 set
